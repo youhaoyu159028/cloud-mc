@@ -8,35 +8,24 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
+        dbus-x11 \
+        fonts-dejavu-core \
         git \
-        jq \
-        unzip \
-        wget \
-        python3 \
-        python3-pip \
-        xauth \
-        xorg \
-        x11vnc \
+        openjdk-21-jre \
+        mesa-utils \
         novnc \
+        python3 \
         websockify \
+        wget \
+        x11-utils \
+        x11vnc \
+        xauth \
         xfce4 \
         xfce4-goodies \
-        openbox \
-        dbus-x11 \
+        xorg \
         xvfb \
-        openjdk-21-jdk \
-        mesa-utils \
-        fonts-dejavu-core \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install a simple browser if needed for later GUI work
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends chromium-browser \
+        unzip \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspaces
-RUN mkdir -p /opt/novnc \
-    && ln -sf /usr/share/novnc /opt/novnc/web \
-    && ln -sf /usr/share/novnc/utils/launch.sh /usr/local/bin/novnc-launch
-
 CMD ["/bin/bash"]

@@ -1,36 +1,28 @@
 # cloud-mc
 
-This repository is set up to work as a GitHub Codespaces experiment for a Minecraft Java 1.21.1 + Fabric workspace using VS Code and a browser-based noVNC desktop.
+A GitHub Codespaces experiment for playing Minecraft Java Edition through the **Minecraft Workbench VS Code extension** and a browser-accessible **noVNC** desktop. This repository does not use GitHub Actions.
 
-Important note:
-- This is not a dedicated cloud gaming VM.
-- GitHub Codespaces is a remote container, not a full GPU-backed gaming host.
-- Minecraft Java client launching is experimental and may be unstable or unusable in this environment.
-- The goal is to provide a remote desktop environment with Java tooling and browser access to the desktop.
+## How the display path works
 
-What this repo includes:
-- VS Code devcontainer config
-- Linux desktop environment
-- VNC + noVNC browser access
-- Java 21 and Fabric baseline tooling
-- Minecraft workspace folders for mods, config, and backups
+1. VS Code installs `Lopleec.minecraft-workbench` into the Codespace.
+2. Minecraft Workbench launches the Minecraft game process on the Codespace's graphical display (`DISPLAY=:1`).
+3. Xvfb provides that display, XFCE provides a desktop, and noVNC streams the display to your browser through forwarded port 6080.
 
-How to use:
-1. Open this repo in GitHub Codespaces.
-2. Wait for the devcontainer to finish building.
-3. In the forwarded ports, open port 6080.
-4. Visit http://localhost:6080/vnc.html
-5. Use the browser to access the desktop inside the Codespace.
-6. Install the Minecraft Java launcher, Fabric, and your modpack inside that desktop.
-7. Keep world backups in the `minecraft/worlds` folder.
+The extension is the launcher; no separate Minecraft launcher is installed by this devcontainer. The first run may require accepting the extension notices, choosing **Instances → New instance**, selecting **Minecraft 1.21.1** and **Fabric**, setting up an account, then choosing **Install / Repair** and **Launch**. Use an account and authentication method you are authorized to use. The extension's documentation says remote/container launches require a graphical session; this devcontainer provides a virtual one.
 
-Files in this repo:
-- `.devcontainer/devcontainer.json`
-- `.devcontainer/Dockerfile`
-- `.devcontainer/setup.sh`
-- `.devcontainer/start-vnc.sh`
+## Start playing
 
-Known limitations:
-- Minecraft Java client may not open properly without a real desktop GPU and hardware acceleration.
-- Codespaces sessions can suspend and stop running apps.
-- Keep your world saves backed up regularly.
+1. Open this repository in a GitHub Codespace and let the devcontainer build.
+2. In the Codespace, open the **Ports** tab and open port **6080** in the browser. The URL should end with `/vnc.html` (or add that path).
+3. In the Codespaces VS Code window, open **Minecraft** in the Activity Bar.
+4. Create an instance with game version **1.21.1** and loader **Fabric**.
+5. Install/repair the instance, then launch it. The game window should appear in the noVNC browser tab.
+
+If the game window does not appear, check the Workbench output/logs and the Codespace terminal for `/tmp/cloud-mc-*.log`. Keep the Codespace port visibility **Private**; the raw VNC port is not forwarded.
+
+## Saves and limitations
+
+- Codespaces is experimental for gameplay: it has no guaranteed gaming GPU, so rendering can be slow or fail. This setup uses software rendering.
+- Stopping/suspending the Codespace stops the game process. Files in the Codespace workspace normally remain available when it resumes, but a rebuild or deletion can remove data outside the repository.
+- Keep important worlds in a workspace-backed location and make separate backups. Do not commit worlds to this public repository; `.gitignore` excludes local game data.
+- This is not a permanent cloud PC or a guarantee of smooth gameplay.

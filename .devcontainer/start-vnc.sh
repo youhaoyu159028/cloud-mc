@@ -3,29 +3,35 @@ set -euo pipefail
 
 export DISPLAY=:1
 
-# Start the virtual X server if it is not already running.
-if ! pgrep -x Xvfb >/dev/null 2>&1; then
-  Xvfb :1 -screen 0 1280x720x24 >/tmp/xvfb.log 2>&1 &
-  sleep 2
+# Provide the virtual graphical display that Minecraft Workbench launches into.
+if ! pgrep -f 'Xvfb :1' >/dev/null 2>&1; then
+  Xvfb :1 -screen 0 1280x800x24 -ac >/tmp/cloud-mc-xvfb.log 2>&1 &
 fi
 
-# Start XFCE if it has not started.
+for _ in $(seq 1 30); do
+  if xdpyinfo -display :1 >/dev/null 2>&1; then
+    break
+  fi
+  sleep 1
+done
+
+if ! xdpyinfo -display :1 >/dev/null 2>&1; then
+  echo 'Xvfb failed to start; see /tmp/cloud-mc-xvfb.log' >&2
+  exit 1
+fi
+
 if ! pgrep -x xfce4-session >/dev/null 2>&1; then
-  dbus-launch --exit-with-session startxfce4 >/tmp/xfce4.log 2>&1 &
-  sleep 3
+  dbus-launch --exit-with-session startxfce4 >/tmp/cloud-mc-xfce.log 2>&1 &
 fi
 
-# Start VNC and noVNC in the background.
-if ! pgrep -x x11vnc >/dev/null 2>&1; then
-  x11vnc -display :1 -listen 0.0.0.0 -nopw -xkb -noxdamage -rfbport 5901 -forever >/tmp/x11vnc.log 2>&1 &
+# Keep the raw VNC server loopback-only; Codespaces forwards only the authenticated HTTP port.
+if ! pgrep -f 'x11vnc.*5901' >/dev/null 2>&1; then
+  x11vnc -display :1 -localhost -nopw -xkb -noxdamage -rfbport 5901 -forever >/tmp/cloud-mc-vnc.log 2>&1 &
 fi
 
-if ! pgrep -x websockify >/dev/null 2>&1; then
-  websockify --web /usr/share/novnc 6080 localhost:5901 >/tmp/novnc.log 2>&1 &
+if ! pgrep -f 'websockify.*6080' >/dev/null 2>&1; then
+  websockify --web /usr/share/novnc 6080 localhost:5901 >/tmp/cloud-mc-novnc.log 2>&1 &
 fi
 
-# Print status
-printf '\nDesktop status:\n'
-printf ' - noVNC: http://localhost:6080/vnc.html\n'
-printf ' - VNC:    localhost:5901\n'
-printf ' - Java:   %s\n' "$(java -version 2>&1 | head -n 1)"
+printf 'noVNC desktop is available on forwarded port 6080 (open /vnc.html).\n'
+printf 'Minecraft Workbench should launch its game process on DISPLAY=%s.\n' "$DISPLAY"

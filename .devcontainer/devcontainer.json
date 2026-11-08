@@ -5,30 +5,29 @@
     "context": ".."
   },
   "remoteUser": "vscode",
-  "postCreateCommand": "bash /workspaces/cloud-mc/.devcontainer/setup.sh",
-  "postStartCommand": "bash /workspaces/cloud-mc/.devcontainer/start-vnc.sh",
-  "forwardPorts": [6080, 5901],
+  "postStartCommand": "bash .devcontainer/start-vnc.sh",
+  "forwardPorts": [6080],
   "portsAttributes": {
     "6080": {
-      "label": "noVNC Desktop",
-      "onAutoForward": "openBrowser"
-    },
-    "5901": {
-      "label": "VNC Remote Desktop"
+      "label": "noVNC - Minecraft desktop",
+      "onAutoForward": "notify",
+      "visibility": "private"
     }
+  },
+  "containerEnv": {
+    "DISPLAY": ":1"
   },
   "customizations": {
     "vscode": {
       "extensions": [
         "Lopleec.minecraft-workbench",
-        "vscjava.vscode-java-pack",
-        "GitHub.vscode-pull-request-github"
-      ]
+        "vscjava.vscode-java-pack"
+      ],
+      "settings": {
+        "terminal.integrated.env.linux": {
+          "DISPLAY": ":1"
+        }
+      }
     }
-  },
-  "containerEnv": {
-    "DISPLAY": ":1",
-    "NOVNC_PORT": "6080",
-    "VNC_PORT": "5901"
   }
 }
