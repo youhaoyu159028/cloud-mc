@@ -1,5 +1,5 @@
 {
-  "name": "cloud-mc",
+  "name": "cloud-mc（Minecraft Codespaces 实验）",
   "build": {
     "dockerfile": "Dockerfile",
     "context": ".."
@@ -9,13 +9,14 @@
   "forwardPorts": [6080],
   "portsAttributes": {
     "6080": {
-      "label": "noVNC - Minecraft desktop",
+      "label": "noVNC - Minecraft 游戏画面",
       "onAutoForward": "notify",
       "visibility": "private"
     }
   },
   "containerEnv": {
-    "DISPLAY": ":1"
+    "DISPLAY": ":1",
+    "LIBGL_ALWAYS_SOFTWARE": "1"
   },
   "customizations": {
     "vscode": {
@@ -25,7 +26,8 @@
       ],
       "settings": {
         "terminal.integrated.env.linux": {
-          "DISPLAY": ":1"
+          "DISPLAY": ":1",
+          "LIBGL_ALWAYS_SOFTWARE": "1"
         }
       }
     }
