@@ -1,0 +1,7 @@
+1、注册火山引擎账号；
+2、登录火山引擎，取消登录保护；
+3、用火山引擎账号登录扣子平台。
+
+火山引擎:  https://www.volcengine.com/
+
+扣子： https://www.coze.cn/home
